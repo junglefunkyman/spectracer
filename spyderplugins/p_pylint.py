@@ -88,7 +88,7 @@ class Pylint(PylintWidget, SpyderPluginMixin):
     #------ SpyderPluginWidget API --------------------------------------------
     def get_plugin_title(self):
         """Return widget title"""
-        return _("Static code analysis")
+        return _("Spectracer")
     
     def get_plugin_icon(self):
         """Return widget icon"""
@@ -122,14 +122,7 @@ class Pylint(PylintWidget, SpyderPluginMixin):
         self.redirect_stdio.connect(self.main.redirect_internalshell_stdio)
         self.main.add_dockwidget(self)
         
-        pylint_act = create_action(self, _("Run static code analysis"),
-                                   triggered=self.run_pylint)
-        pylint_act.setEnabled(PYLINT_PATH is not None)
-        self.register_shortcut(pylint_act, context="Pylint",
-                               name="Run analysis")
-        
-        self.main.source_menu_actions += [None, pylint_act]
-        self.main.editor.pythonfile_dependent_actions += [pylint_act]
+        self.main.chart = self.chart
 
     def refresh_plugin(self):
         """Refresh pylint widget"""

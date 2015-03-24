@@ -26,6 +26,8 @@ import time
 import re
 import subprocess
 
+from pyqtgraph import GraphicsLayoutWidget
+
 # Local imports
 from spyderlib import dependencies
 from spyderlib.utils import programs
@@ -224,33 +226,17 @@ class PylintWidget(QWidget):
         hlayout2.addWidget(self.datelabel)
         hlayout2.addStretch()
         hlayout2.addWidget(self.log_button)
+
+        self.chart = GraphicsLayoutWidget()
         
         layout = QVBoxLayout()
-        layout.addLayout(hlayout1)
-        layout.addLayout(hlayout2)
-        layout.addWidget(self.treewidget)
+        layout.addWidget(self.chart)
         self.setLayout(layout)
         
         self.process = None
         self.set_running_state(False)
         
-        if PYLINT_PATH is None:
-            for widget in (self.treewidget, self.filecombo,
-                           self.start_button, self.stop_button):
-                widget.setDisabled(True)
-            if os.name == 'nt' \
-               and programs.is_module_installed("pylint"):
-                # Pylint is installed but pylint script is not in PATH
-                # (AFAIK, could happen only on Windows)
-                text = _('Pylint script was not found. Please add "%s" to PATH.')
-                text = to_text_string(text) % osp.join(sys.prefix, "Scripts")
-            else:
-                text = _('Please install <b>pylint</b>:')
-                url = 'http://www.logilab.fr'
-                text += ' <a href=%s>%s</a>' % (url, url)
-            self.ratelabel.setText(text)
-        else:
-            self.show_data()
+
         
     def analyze(self, filename):
         if PYLINT_PATH is None:

@@ -34,6 +34,8 @@ from spyderlib.qt.QtCore import Signal, Slot, Qt
 from IPython.core.application import get_ipython_dir
 from IPython.lib.kernel import find_connection_file
 
+from IPython.qt.inprocess import QtInProcessKernelManager
+
 from IPython.qt.manager import QtKernelManager
 try: # IPython = "<=2.0"
     from IPython.external.ssh import tunnel as zmqtunnel
@@ -777,24 +779,12 @@ class IPythonConsole(SpyderPluginWidget):
         norm = lambda text: remove_backslashes(to_text_string(text))
         client = self.get_current_client()
         if client is not None:
-            # Internal kernels, use runfile
-            if client.kernel_widget_id is not None:
-                line = "%s('%s'" % ('debugfile' if debug else 'runfile',
-                                    norm(filename))
-                if args:
-                    line += ", args='%s'" % norm(args)
-                if wdir:
-                    line += ", wdir='%s'" % norm(wdir)
-                if post_mortem:
-                    line += ", post_mortem=True"
-                line += ")"
-            else: # External kernels, use %run
-                line = "%run "
-                if debug:
-                    line += "-d "
-                line += "\"%s\"" % to_text_string(filename)
-                if args:
-                    line += " %s" % norm(args)
+            line = "%run -i "
+            if debug:
+                line += "-d "
+            line += "\"%s\"" % to_text_string(filename)
+            if args:
+                line += " %s" % norm(args)
             self.execute_python_code(line)
             self.visibility_changed(True)
             self.raise_()
@@ -936,8 +926,8 @@ class IPythonConsole(SpyderPluginWidget):
             if len(self.get_related_clients(client)) > 0 and \
               self.get_option('ask_before_closing'):
                 ans = QMessageBox.question(self, self.get_plugin_title(),
-                       _("Do you want to close all other consoles connected "
-                         "to the same kernel as this one?"),
+                       _("Do you want to close all other clients connected to "
+                         "the same kernel as this one?"),
                        QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel)
                 if ans == QMessageBox.Cancel:
                     return
@@ -1004,9 +994,12 @@ class IPythonConsole(SpyderPluginWidget):
                                          password=None):
         """Create kernel manager and client"""
         cf = find_connection_file(connection_file, profile='default')
-        kernel_manager = QtKernelManager(connection_file=cf, config=None)
+        kernel_manager = QtInProcessKernelManager()
+        # kernel_manager = QtKernelManager(connection_file=cf, config=None)
+        # kernel_client.load_connection_file()
+        kernel_manager.start_kernel()
+        self.main.kernel = kernel_manager.kernel
         kernel_client = kernel_manager.client()
-        kernel_client.load_connection_file()
         if hostname is not None:
             try:
                 newports = self.tunnel_to_kernel(dict(ip=kernel_client.ip,

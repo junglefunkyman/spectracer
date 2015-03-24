@@ -27,6 +27,9 @@ import os.path as osp
 import sys
 import subprocess
 
+from PySide import QtGui, QtCore
+from core import *
+
 # Local imports
 from spyderlib.baseconfig import SCIENTIFIC_STARTUP, running_in_mac_app, _
 from spyderlib.config import CONF
@@ -1016,7 +1019,11 @@ class ExternalConsole(SpyderPluginWidget):
         ipyclient.kernel_widget_id = id(kernel_widget)
         ipyconsole.register_client(ipyclient, restart=restart_kernel,
                                    give_focus=give_focus)
-        
+        context = QtCore.QObject()
+        self.main.kernel.shell.push({'context': context,
+                                     'dataSourceFactory' : DataSourceFactory(context),
+                                     'chartManager': ChartManager(context, self.main.chart)})
+
     def open_file_in_spyder(self, fname, lineno):
         """Open file in Spyder's editor from remote process"""
         self.main.editor.activateWindow()

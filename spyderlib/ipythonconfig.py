@@ -30,15 +30,17 @@ def is_qtconsole_installed():
     # crash for us
     # TODO: Remove this once IPython 3 is released
     if programs.is_module_installed('IPython.qt', '<3.0') and PYQT5:
+        print "disabled iPython since python < 3.0 and pyqt5"
         return False
     
     # Check if pyzmq is installed too, else, what's the point?
     pyzmq_installed = programs.is_module_installed('zmq', version=ZMQ_REQVER)
-    pygments_installed = programs.is_module_installed('pygments')
-    if programs.is_module_installed('IPython.qt') and pyzmq_installed \
-      and pygments_installed:    
+    if programs.is_module_installed('IPython.qt') and pyzmq_installed:
         return True
     else:
+        if not programs.is_module_installed('IPython.qt'):
+            print "disabled iPython no module IPython.qt found"
+        print "disabled iPython no module pyzmq found"
         return False
 
 IPYTHON_QT_INSTALLED = is_qtconsole_installed()

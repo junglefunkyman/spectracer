@@ -1019,10 +1019,11 @@ class ExternalConsole(SpyderPluginWidget):
         ipyclient.kernel_widget_id = id(kernel_widget)
         ipyconsole.register_client(ipyclient, restart=restart_kernel,
                                    give_focus=give_focus)
-        context = QtCore.QObject()
-        self.main.kernel.shell.push({'context': context,
-                                     'dataSourceFactory' : DataSourceFactory(context),
-                                     'chartManager': ChartManager(context, self.main.chart)})
+        self.main.kernel.shell.push({'context': self.main.spec.context,
+                         'dataSourceFactory' : self.main.spec.dataSourceFactory,
+                         'specs': self.main.spec.specs,
+                         'spectracer': self.main.spec,
+                         'add_spec': self.main.spec.add_spec})
 
     def open_file_in_spyder(self, fname, lineno):
         """Open file in Spyder's editor from remote process"""

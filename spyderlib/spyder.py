@@ -155,6 +155,7 @@ from spyderlib.guiconfig import get_shortcut, remove_deprecated_shortcuts
 from spyderlib.otherplugins import get_spyderplugins_mods
 from spyderlib import tour # FIXME: Better place for this?
 
+from spyderplugins.specutils import SpectracerHelper
 
 #==============================================================================
 # To save and load temp sessions
@@ -507,6 +508,7 @@ class MainWindow(QMainWindow):
                                                socket.IPPROTO_TCP)
 
         self.apply_settings()
+        self.spec = SpectracerHelper(self)
         self.debug_print("End of MainWindow constructor")
 
     def debug_print(self, message):
@@ -1090,6 +1092,8 @@ class MainWindow(QMainWindow):
                     plugin.register_plugin()
                 except AttributeError as error:
                     print("%s: %s" % (mod, str(error)), file=STDERR)
+
+            self.spec.add_spec()
 
 
     #----- View

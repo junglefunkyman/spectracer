@@ -106,10 +106,13 @@ class Painter(Receiver):
 
 
 class ChartManager:
-    def __init__(self, parent, widget):
-        self.parent = parent
-        self.widget = widget
+    def __init__(self, context, chartWidget):
+        self.context = context
+        self.chartWidget = chartWidget
+        self.painters = []
 
-    def createChart(self, title):
-        chart = self.widget.addPlot(title=title)
-        return Painter(chart, self.parent)
+    def addPlot(self, title):
+        plot = self.chartWidget.addPlot(title=title)
+        painter = Painter(plot, self.context)
+        self.painters.append(painter)
+        return painter

@@ -201,10 +201,6 @@ class PylintWidget(QWidget):
         self.filecombo.valid.connect(self.start_button.setEnabled)
         self.filecombo.valid.connect(self.show_data)
 
-        browse_button = create_toolbutton(self, icon=get_icon('fileopen.png'),
-                               tip=_('Select Python file'),
-                               triggered=self.select_file)
-
         self.ratelabel = QLabel()
         self.datelabel = QLabel()
         self.log_button = create_toolbutton(self, icon=get_icon('log.png'),
@@ -213,20 +209,6 @@ class PylintWidget(QWidget):
                                     tip=_("Complete output"),
                                     triggered=self.show_log)
         self.treewidget = ResultsTree(self)
-        
-        hlayout1 = QHBoxLayout()
-        hlayout1.addWidget(self.filecombo)
-        hlayout1.addWidget(browse_button)
-        hlayout1.addWidget(self.start_button)
-        hlayout1.addWidget(self.stop_button)
-
-        hlayout2 = QHBoxLayout()
-        hlayout2.addWidget(self.ratelabel)
-        hlayout2.addStretch()
-        hlayout2.addWidget(self.datelabel)
-        hlayout2.addStretch()
-        hlayout2.addWidget(self.log_button)
-
         self.chart = GraphicsLayoutWidget()
         
         layout = QVBoxLayout()
@@ -235,9 +217,7 @@ class PylintWidget(QWidget):
         
         self.process = None
         self.set_running_state(False)
-        
 
-        
     def analyze(self, filename):
         if PYLINT_PATH is None:
             return

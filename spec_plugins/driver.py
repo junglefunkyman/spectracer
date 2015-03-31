@@ -1,4 +1,7 @@
 from ctypes import cdll
+
+from speclib.core import
+
 lib = cdll.LoadLibrary('./spec_plugins/libdriver.so')
 
 class Driver(object):

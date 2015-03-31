@@ -4,83 +4,27 @@
 # Licensed under the terms of the MIT License
 # (see spyderlib/__init__.py for details)
 
-"""Pylint Code Analysis Plugin"""
-
-# pylint: disable=C0103
-# pylint: disable=R0903
-# pylint: disable=R0911
-# pylint: disable=R0201
 
 from spyderlib.qt.QtGui import QInputDialog, QVBoxLayout, QGroupBox, QLabel
 from spyderlib.qt.QtCore import Signal, Qt
 
 # Local imports
 from spyderlib.baseconfig import get_translation
-_ = get_translation("p_pylint", dirname="spyderplugins")
+_ = get_translation("spectracer", dirname="spyderplugins")
 from spyderlib.utils.qthelpers import get_icon, create_action
 from spyderlib.plugins import SpyderPluginMixin, PluginConfigPage
 
-from spyderplugins.widgets.pylintgui import PylintWidget, PYLINT_PATH
+from spyderplugins.widgets.spectracergui import SpectracerWidget
 from core import ChartManager
 
 
-class PylintConfigPage(PluginConfigPage):
-    def setup_page(self):
-        settings_group = QGroupBox(_("Settings"))
-        save_box = self.create_checkbox(_("Save file before analyzing it"),
-                                        'save_before', default=True)
-
-        hist_group = QGroupBox(_("History"))
-        hist_label1 = QLabel(_("The following option will be applied at next "
-                               "startup."))
-        hist_label1.setWordWrap(True)
-        hist_spin = self.create_spinbox(_("History: "),
-                            _(" results"), 'max_entries', default=50,
-                            min_=10, max_=1000000, step=10)
-
-        results_group = QGroupBox(_("Results"))
-        results_label1 = QLabel(_("Results are stored here:"))
-        results_label1.setWordWrap(True)
-
-        # Warning: do not try to regroup the following QLabel contents with
-        # widgets above -- this string was isolated here in a single QLabel
-        # on purpose: to fix Issue 863
-        results_label2 = QLabel(PylintWidget.DATAPATH)
-
-        results_label2.setTextInteractionFlags(Qt.TextSelectableByMouse)
-        results_label2.setWordWrap(True)
-
-        settings_layout = QVBoxLayout()
-        settings_layout.addWidget(save_box)
-        settings_group.setLayout(settings_layout)
-
-        hist_layout = QVBoxLayout()
-        hist_layout.addWidget(hist_label1)
-        hist_layout.addWidget(hist_spin)
-        hist_group.setLayout(hist_layout)
-
-        results_layout = QVBoxLayout()
-        results_layout.addWidget(results_label1)
-        results_layout.addWidget(results_label2)
-        results_group.setLayout(results_layout)
-
-        vlayout = QVBoxLayout()
-        vlayout.addWidget(settings_group)
-        vlayout.addWidget(hist_group)
-        vlayout.addWidget(results_group)
-        vlayout.addStretch(1)
-        self.setLayout(vlayout)
-
-
-class Spectracer(PylintWidget, SpyderPluginMixin):
+class Spectracer(SpectracerWidget, SpyderPluginMixin):
     """Python source code analysis based on pylint"""
-    CONF_SECTION = 'pylint'
-    CONFIGWIDGET_CLASS = PylintConfigPage
+    CONF_SECTION = 'spectracer'
     edit_goto = Signal(str, int, str)
 
     def __init__(self, context, parent=None, index=0):
-        PylintWidget.__init__(self, parent=parent,
-                              max_entries=self.get_option('max_entries', 50))
+        SpectracerWidget.__init__(self, parent=parent)
         SpyderPluginMixin.__init__(self, parent)
 
         self.index = index
@@ -108,12 +52,6 @@ class Spectracer(PylintWidget, SpyderPluginMixin):
     
     def get_plugin_actions(self):
         """Return a list of actions related to plugin"""
-        # Font
-        history_action = create_action(self, _("History..."),
-                                       None, 'history.png',
-                                       _("Set history maximum entries"),
-                                       triggered=self.change_history_depth)
-        self.treewidget.common_actions += (None, history_action)
         return []
 
     def on_first_registration(self):
@@ -128,9 +66,9 @@ class Spectracer(PylintWidget, SpyderPluginMixin):
         self.main.add_dockwidget(self)
 
     def refresh_plugin(self):
-        """Refresh pylint widget"""
-        self.remove_obsolete_items()
-        
+        """Refresh widget"""
+        pass
+
     def closing_plugin(self, cancelable=False):
         """Perform actions before parent main window is closed"""
         return True
@@ -140,13 +78,3 @@ class Spectracer(PylintWidget, SpyderPluginMixin):
         # The history depth option will be applied at 
         # next Spyder startup, which is soon enough
         pass
-
-    #------ Public API --------------------------------------------------------
-    def change_history_depth(self):
-        "Change history max entries"""
-        depth, valid = QInputDialog.getInteger(self, _('History'),
-                                       _('Maximum entries'),
-                                       self.get_option('max_entries'),
-                                       10, 10000)
-        if valid:
-            self.set_option('max_entries', depth)

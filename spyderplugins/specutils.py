@@ -1,6 +1,8 @@
 from PySide import QtCore
+
 from spyderplugins.spectracer import Spectracer
-from core import DataSourceFactory
+from speclib.core import DataSourceFactory
+
 
 class SpectracerHelper:
     def __init__(self, main):

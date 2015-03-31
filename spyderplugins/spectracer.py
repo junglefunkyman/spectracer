@@ -5,17 +5,16 @@
 # (see spyderlib/__init__.py for details)
 
 
-from spyderlib.qt.QtGui import QInputDialog, QVBoxLayout, QGroupBox, QLabel
-from spyderlib.qt.QtCore import Signal, Qt
+from spyderlib.qt.QtCore import Signal
 
 # Local imports
 from spyderlib.baseconfig import get_translation
 _ = get_translation("spectracer", dirname="spyderplugins")
-from spyderlib.utils.qthelpers import get_icon, create_action
-from spyderlib.plugins import SpyderPluginMixin, PluginConfigPage
+from spyderlib.utils.qthelpers import get_icon
+from spyderlib.plugins import SpyderPluginMixin
 
 from spyderplugins.widgets.spectracergui import SpectracerWidget
-from core import ChartManager
+from speclib.core import ChartManager
 
 
 class Spectracer(SpectracerWidget, SpyderPluginMixin):

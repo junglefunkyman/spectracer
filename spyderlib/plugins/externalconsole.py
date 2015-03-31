@@ -17,7 +17,7 @@ from spyderlib.qt.QtGui import (QVBoxLayout, QMessageBox, QInputDialog,
                                 QLineEdit, QPushButton, QGroupBox, QLabel,
                                 QTabWidget, QFontComboBox, QHBoxLayout,
                                 QButtonGroup)
-from spyderlib.qt.QtCore import Signal, Slot, Qt
+from spyderlib.qt.QtCore import Qt
 from spyderlib.qt.compat import getopenfilename
 
 # Stdlib imports
@@ -27,8 +27,7 @@ import os.path as osp
 import sys
 import subprocess
 
-from PySide import QtGui, QtCore
-from core import *
+from speclib.core import *
 
 # Local imports
 from spyderlib.baseconfig import SCIENTIFIC_STARTUP, running_in_mac_app, _

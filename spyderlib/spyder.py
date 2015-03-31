@@ -131,7 +131,7 @@ from spyderlib.utils.introspection import module_completion
 from spyderlib.utils.misc import select_port
 from spyderlib.py3compat import (PY3, to_text_string, is_text_string, getcwd,
                                  u, qbytearray_to_str, configparser as cp)
-
+from PySide import QtCore
 
 #==============================================================================
 # Local gui imports

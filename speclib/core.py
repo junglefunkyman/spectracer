@@ -26,9 +26,9 @@ class Spectrum:
 
 
 class DataSource(QObject):
-    def __init__(self, spectrum, parent=None):
+    def __init__(self, parent=None):
         super(DataSource, self).__init__(parent)
-        self.spectrum = spectrum
+        self.spectrum = Spectrum([])
 
     updated = Signal(object)
 
@@ -61,7 +61,7 @@ class Filter(DataSource, Receiver):
 
 class RandomGenerator(DataSource):
     def __init__(self, interval, parent=None):
-        super(RandomGenerator, self).__init__(Spectrum([]), parent)
+        super(RandomGenerator, self).__init__(parent)
         self.interval = interval
         self.ptr = 0
         self.xs = np.linspace(1, 100, num=100)
